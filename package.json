@@ -1,0 +1,33 @@
+{
+  "name": "matchplan-creator",
+  "version": "1.0.0",
+  "description": "Create latex matchplans",
+  "scripts": {
+    "start": "npm run build && node .",
+    "build": "npm test && rm -Rf ./dist && ./node_modules/.bin/tsc",
+    "test": "npm run lint && jasmine-ts \"src/**/*.spec.ts\"",
+    "lint": "./node_modules/tslint/bin/tslint --fix src/**/*.ts"
+  },
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soccertools/matchplan-creator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/soccertools/matchplan-creator/issues"
+  },
+  "homepage": "https://github.com/soccertools/matchplan-creator#readme",
+  "devDependencies": {
+    "@types/jasmine": "^2.8.7",
+    "jasmine": "^3.1.0",
+    "jasmine-ts": "^0.2.1",
+    "tslint": "^5.10.0",
+    "typescript": "^2.8.3"
+  },
+  "dependencies": {
+    "scraperlib": "^1.1.0"
+  }
+}
