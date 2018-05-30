@@ -10,7 +10,8 @@
       "trailing-comma": {
         "multiline": "never",
         "singleline": "never"
-      }
+      },
+      "interface-name": false
     },
     "rulesDirectory": []
 }
