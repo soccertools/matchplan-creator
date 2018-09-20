@@ -1,18 +1,30 @@
 import * as Moment from 'moment';
 import {
   Match,
+  Month,
   Team
 } from 'scraperlib';
 import { AgeClass } from './age-class';
 import { Week } from './week';
 
+Moment.locale('de');
+
 export class MatchplanUtilites {
+  public static getMonthFromName(nameOfMonth: string): Month {
+      const numberOfMonth = Moment().month(nameOfMonth).format("M");
+      return parseInt(numberOfMonth, 10) - 1;
+  }
+
   public static createPrefix(team: Team, ignoreList: string[]) {
+    if (!team.type) {
+      return "~";
+    }
+
     if (ignoreList.indexOf(team.type) !== -1) {
       return "";
-    } else {
-      return team.type + ":";
     }
+
+    return team.type + ":";
   }
 
   public static getAgeClassIndexOfMatch(match: Match, ageClasses: AgeClass[]) {

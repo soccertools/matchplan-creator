@@ -1,0 +1,13 @@
+matchplan:
+  type: table
+  club:
+    id: 00ES8GNC6K000035VV0AG08LVUPGND5I
+    nameSelector: Hochstedt
+    ageClasses:
+      - { name: Herren, selector: <nameSelector> I}
+      - { name: Herren, selector: <nameSelector> II}
+      - { name: D-Junioren }
+      - { name: E-Junioren }
+      - { name: F-Junioren, selector: <nameSelector> I }
+      - { name: F-Junioren, selector: <nameSelector> II }
+      - { name: G-Junioren }

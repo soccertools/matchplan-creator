@@ -6,11 +6,13 @@
         "ES2015",
         "ES2015.Promise"
       ],
+      "types": [],
       "moduleResolution": "node",
       "typeRoots": [ "node_modules/@types" ],
       "declaration": true,
       "outDir": "./dist",
       "forceConsistentCasingInFileNames": true
+
   },
   "include": [
       "src/**/*"
