@@ -1,4 +1,4 @@
-import { AgeClass } from './age-class';
+import { AgeClass } from '../definitions/age-class';
 
 import * as Moment from 'moment';
 import * as Mustache from 'mustache';
@@ -8,11 +8,11 @@ import {
   teamnameShortener
 } from 'scraperlib';
 
-import { MatchplanContext } from './definitions/matchplan-context';
-import { LatexGenerator } from "./latex-generator.interface";
-import { MatchplanUtilites } from "./matchplan-utilities";
-import { teamnameCutter } from './teamname-cutter';
-import { Week } from './week';
+import { MatchplanContext } from '../definitions/matchplan-context';
+import { Week } from '../definitions/week';
+import { LatexGenerator } from "../latex-generator.interface";
+import { MatchplanUtilites } from "../matchplan-utilities";
+import { teamnameCutter } from '../operators/teamname-cutter';
 
 Moment.locale('de');
 

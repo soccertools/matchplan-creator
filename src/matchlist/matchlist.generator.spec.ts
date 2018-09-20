@@ -1,6 +1,6 @@
 import "jasmine";
 import { Match, Month, Team } from "scraperlib";
-import { MatchplanContext } from "./definitions/matchplan-context";
+import { MatchplanContext } from "../definitions/matchplan-context";
 import { MatchlistGenerator } from "./matchlist.generator";
 
 describe('MatchlistGenerator', () => {

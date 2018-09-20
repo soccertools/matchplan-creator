@@ -3,10 +3,10 @@ import * as fs from "fs";
 import { HttpClient } from "typed-rest-client/HttpClient";
 import * as YAML from "yaml";
 import { LatexGenerator } from "./latex-generator.interface";
-import { MatchService } from "./match-service";
-import { MatchlistGenerator } from "./matchlist.generator";
+import { MatchService } from "./match.service";
+import { MatchlistGenerator } from "./matchlist/matchlist.generator";
 import { MatchplanUtilites } from "./matchplan-utilities";
-import { MatchtableGenerator } from "./matchtable.generator";
+import { MatchtableGenerator } from "./matchtable/matchtable.generator";
 
 export class AppWrapper {
 

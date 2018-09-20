@@ -1,7 +1,7 @@
 import "jasmine";
 import { Match, Month, Team } from "scraperlib";
-import { AgeClass } from "./age-class";
-import { MatchplanContext } from "./definitions/matchplan-context";
+import { AgeClass } from "../definitions/age-class";
+import { MatchplanContext } from "../definitions/matchplan-context";
 import { MatchtableGenerator } from "./matchtable.generator";
 
 describe('MatchtableGenerator', () => {
@@ -31,10 +31,10 @@ describe('MatchtableGenerator', () => {
           ],
           id: "someId",
           nameSelector: "SomeName",
-          shortener: {
-            aliases: [],
-            forbidden: [],
-          },
+        },
+        shortener: {
+          aliases: [],
+          forbidden: [],
         },
         type: "list",
       };

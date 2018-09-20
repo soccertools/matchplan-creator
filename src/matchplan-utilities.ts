@@ -4,8 +4,8 @@ import {
   Month,
   Team
 } from 'scraperlib';
-import { AgeClass } from './age-class';
-import { Week } from './week';
+import { AgeClass } from './definitions/age-class';
+import { Week } from './definitions/week';
 
 Moment.locale('de');
 
