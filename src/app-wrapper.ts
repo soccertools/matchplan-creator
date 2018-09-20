@@ -6,6 +6,7 @@ import { LatexGenerator } from "./latex-generator.interface";
 import { MatchService } from "./match-service";
 import { MatchlistGenerator } from "./matchlist.generator";
 import { MatchplanUtilites } from "./matchplan-utilities";
+import { MatchtableGenerator } from "./matchtable.generator";
 
 export class AppWrapper {
 
@@ -32,12 +33,15 @@ export class AppWrapper {
 
           let generator: LatexGenerator;
 
-          if (configuration.matchplan.type === 'list') {
-            generator = new MatchlistGenerator();
-          }
-
-          if (!generator) {
-            throw new Error('no suitable generator found for this config');
+          switch (configuration.matchplan.type) {
+            case 'list':
+              generator = new MatchlistGenerator();
+              break;
+            case 'table':
+              generator = new MatchtableGenerator();
+              break;
+            default:
+              throw new Error('no suitable generator found for this config');
           }
 
           this.matchService.loadMatches(

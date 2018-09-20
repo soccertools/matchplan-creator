@@ -103,7 +103,6 @@ export class MatchtableGenerator implements LatexGenerator {
         return week;
       }
     );
-    console.log(weeks);
 
     return Mustache.render(this.matchplanTemplate, { weeks });
   }
