@@ -1,5 +1,6 @@
 import "jasmine";
 import { Match, Month, Team } from "scraperlib";
+import { AgeClass } from "./age-class";
 import { MatchplanContext } from "./definitions/matchplan-context";
 import { MatchtableGenerator } from "./matchtable.generator";
 
@@ -23,12 +24,17 @@ describe('MatchtableGenerator', () => {
 
     function buildSampleContext(): MatchplanContext {
       const context: MatchplanContext = {
-        prefixer: {
-          noPrefix: "none"
-        },
-        shortener: {
-          aliases: [],
-          forbidden: [],
+        club: {
+          ageClasses: [
+            new AgeClass("Herren", "Herren I"),
+            new AgeClass("Herren", "Herren II")
+          ],
+          id: "someId",
+          nameSelector: "SomeName",
+          shortener: {
+            aliases: [],
+            forbidden: [],
+          },
         },
         type: "list",
       };

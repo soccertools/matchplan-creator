@@ -43,17 +43,18 @@ export class MatchtableGenerator implements LatexGenerator {
   public generate(matches: Match[], context: MatchplanContext) {
     return this.createLatexMatchtable(
       matches,
-      context.clubNameSelector,
-      context.ageClasses
+      context.club.nameSelector,
+      context.club.ageClasses,
+      context.shortener.forbidden
     );
   }
 
   private createLatexMatchtable(
     matches: Match[],
     clubNameSelector: string,
-    ageClasses: AgeClass[]
+    ageClasses: AgeClass[],
+    forbiddenShortenerTerms: string[]
   ): string {
-    const teamnameBlacklist = ['Erfurt'];
     const mandatoryDays = [4, 5, 6];
     const weeklyGroupedMatches: { [id: string]: Match[]; } = MatchplanUtilites.groupMatchesByWeekNumber(matches);
     const weekendBuckets = MatchplanUtilites.createWeekendBuckets(weeklyGroupedMatches, mandatoryDays, ageClasses);
@@ -87,9 +88,15 @@ export class MatchtableGenerator implements LatexGenerator {
                   return teamDay += " . ";
                 } else {
                   const abbrevations = [['Hochstedt', 'Ho.'], ['Vieselbach', 'Vi.']];
-                  const blacklist = ['Erfurt'];
-                  const home = teamnameCutter(teamnameShortener(match.home.name, blacklist), abbrevations);
-                  const guest = teamnameCutter(teamnameShortener(match.guest.name, blacklist), abbrevations);
+                  const blacklist = forbiddenShortenerTerms;
+                  const home = teamnameCutter(
+                    teamnameShortener(match.home.name, forbiddenShortenerTerms),
+                    abbrevations
+                  );
+                  const guest = teamnameCutter(
+                    teamnameShortener(match.guest.name, forbiddenShortenerTerms),
+                    abbrevations
+                  );
                   return teamDay += ' ' + home + ' vs. ' + guest + ' ';
                 }
               },

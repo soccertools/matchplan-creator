@@ -1,5 +1,13 @@
 matchplan:
   type: table
+  shortener:
+    forbidden:
+      - Erfurt
+  table:
+    mandatoryDays:
+      - Freitag
+      - Samstag
+      - Sonntag
   club:
     id: 00ES8GNC6K000035VV0AG08LVUPGND5I
     nameSelector: Hochstedt
