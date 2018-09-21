@@ -6,6 +6,7 @@ import {
 } from 'scraperlib';
 import { AgeClass } from './definitions/age-class';
 import { Week } from './definitions/week';
+import { WeekendBucket } from './definitions/weekend-bucket';
 
 Moment.locale('de');
 
@@ -99,7 +100,7 @@ export class MatchplanUtilites {
     groupedMatches: { [id: string]: Match[]; },
     mandatoryDays: number[],
     ageClasses: AgeClass[]
-  ): { [id: string]: Week; } {
+  ): WeekendBucket {
     const weekNumbers = Object.keys(groupedMatches);
     const result = {};
 
