@@ -5,6 +5,7 @@ import {
   Team
 } from 'scraperlib';
 import { AgeClass } from './definitions/age-class';
+import { AgeClassWrapper } from './definitions/age-class-wrapper';
 import { GroupedMatches } from './definitions/grouped-matches';
 import { Week } from './definitions/week';
 import { WeekendBucket } from './definitions/weekend-bucket';
@@ -17,30 +18,46 @@ export class MatchplanUtilites {
       return parseInt(numberOfMonth, 10) - 1;
   }
 
-  public static getAgeClassIndexOfMatch(match: Match, ageClasses: AgeClass[]) {
-    const matchingClassIndexes = [];
-    ageClasses.forEach(
-      (ageClass, index) => {
-        if (
-          ageClass.ageSelector === match.home.type &&
-          (
-            !ageClass.nameSelector ||
-            match.home.name.indexOf(ageClass.nameSelector) !== -1 ||
-            match.guest.name.indexOf(ageClass.nameSelector) !== -1
-          )
-        ) {
-          matchingClassIndexes.push(index);
+  public static getAgeClassWithIndexOfMatch(match: Match, ageClasses: AgeClass[]): AgeClassWrapper {
+    if (!match.home.type) {
+      return {
+        index: -1
+      };
+    }
+
+    const matchedAgeClasses = ageClasses.map(
+      (item, index) => {
+        return {
+          ageClass: item,
+          index
+        };
+      }
+    )
+    .filter(
+      (ageClassWrapper) => {
+        const ageClass = ageClassWrapper.ageClass;
+
+        if (ageClass.ageSelector === match.home.type) {
+          if (!ageClass.nameSelector) {
+            return true;
+          }
+
+          if (match.home.name.indexOf(ageClass.nameSelector) !== -1) {
+            return true;
+          }
         }
+
+        return false;
       }
     );
 
-    if (matchingClassIndexes.length > 1) {
+    if (matchedAgeClasses.length > 1) {
       console.warn(`
         Found mulitple matches for same team on same day.
         Continue with first match.`
       );
-      return matchingClassIndexes[0];
-    } else if (matchingClassIndexes.length === 0) {
+      return matchedAgeClasses[0];
+    } else if (matchedAgeClasses.length === 0) {
       throw new Error(
         'no age class found (' +
         match.home.name + '/' + match.home.type +
@@ -49,7 +66,7 @@ export class MatchplanUtilites {
       );
     }
 
-    return matchingClassIndexes[0];
+    return matchedAgeClasses[0];
   }
 
   public static expandWeek(week: Week, ageClasses: AgeClass[]): Week {
@@ -58,7 +75,7 @@ export class MatchplanUtilites {
         const ageClassBuckets = ageClasses.map(() => null);
         day.forEach(
           (match) => {
-            const i = MatchplanUtilites.getAgeClassIndexOfMatch(match, ageClasses);
+            const i = MatchplanUtilites.getAgeClassWithIndexOfMatch(match, ageClasses).index;
             ageClassBuckets[i] = match;
           }
         );
