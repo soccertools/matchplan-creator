@@ -5,6 +5,7 @@ import {
   Team
 } from 'scraperlib';
 import { AgeClass } from './definitions/age-class';
+import { GroupedMatches } from './definitions/grouped-matches';
 import { Week } from './definitions/week';
 import { WeekendBucket } from './definitions/weekend-bucket';
 
@@ -16,24 +17,12 @@ export class MatchplanUtilites {
       return parseInt(numberOfMonth, 10) - 1;
   }
 
-  public static createPrefix(team: Team, ignoreList: string[]) {
-    if (!team.type) {
-      return "~";
-    }
-
-    if (ignoreList.indexOf(team.type) !== -1) {
-      return "";
-    }
-
-    return team.type + ":";
-  }
-
   public static getAgeClassIndexOfMatch(match: Match, ageClasses: AgeClass[]) {
     const matchingClassIndexes = [];
     ageClasses.forEach(
       (ageClass, index) => {
-        if (ageClass.ageSelector ===
-          match.home.type &&
+        if (
+          ageClass.ageSelector === match.home.type &&
           (
             !ageClass.nameSelector ||
             match.home.name.indexOf(ageClass.nameSelector) !== -1 ||
@@ -79,7 +68,7 @@ export class MatchplanUtilites {
     return week;
   }
 
-  public static groupMatchesByWeekNumber(matches: Match[]): { [id: string]: Match[]; } {
+  public static groupMatchesByWeekNumber(matches: Match[]): GroupedMatches {
     return matches.reduce(
       (groups, match) => {
         const key = Moment(match.date).isoWeek();
@@ -97,7 +86,7 @@ export class MatchplanUtilites {
   }
 
   public static createWeekendBuckets(
-    groupedMatches: { [id: string]: Match[]; },
+    groupedMatches: GroupedMatches,
     mandatoryDays: number[],
     ageClasses: AgeClass[]
   ): WeekendBucket {

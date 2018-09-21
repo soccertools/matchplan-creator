@@ -5,7 +5,7 @@ import * as Mustache from 'mustache';
 
 import {
   Match,
-  teamnameShortener
+  teamnameShortener,
 } from 'scraperlib';
 
 import { MatchplanContext } from '../definitions/matchplan-context';
@@ -113,4 +113,5 @@ export class MatchtableGenerator implements LatexGenerator {
 
     return Mustache.render(this.matchplanTemplate, { weeks });
   }
+
 }

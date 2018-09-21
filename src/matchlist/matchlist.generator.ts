@@ -1,6 +1,7 @@
 import {
   Match,
-  teamnameShortener
+  Team,
+  teamnameShortener,
 } from 'scraperlib';
 import { LatexGenerator } from "../latex-generator.interface";
 import { MatchService } from "../match.service";
@@ -19,6 +20,18 @@ export class MatchlistGenerator implements LatexGenerator {
   \\match{<<subtitle>>}{<<&home>>}{<<&guest>>}{<<prefix>>}
   <</matches>>
   `;
+
+  private static formatPrefix(team: Team, ignoreList: string[]) {
+    if (!team.type) {
+      return "~";
+    }
+
+    if (ignoreList.indexOf(team.type) !== -1) {
+      return "";
+    }
+
+    return team.type + ":";
+  }
 
   private matchplanTemplate: string;
 
@@ -53,7 +66,7 @@ export class MatchlistGenerator implements LatexGenerator {
         return {
           guest: teamnameShortener(match.guest.name, teamnameBlacklist, aliases),
           home: teamnameShortener(match.home.name, teamnameBlacklist, aliases),
-          prefix: MatchplanUtilites.createPrefix(match.home, agegroupIgnorelist),
+          prefix: MatchlistGenerator.formatPrefix(match.home, agegroupIgnorelist),
           subtitle: date.format('LLLL') + ' Uhr'
           };
       }
