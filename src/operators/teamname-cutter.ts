@@ -15,7 +15,7 @@ export function teamnameCutter(teamname: string, defaultReplacements: string[][]
       }
 
       // already abbrevated
-      if (word.endsWith('.')) {
+      if (word.endsWith('.') && word.length < 8) {
         return word;
       }
 
