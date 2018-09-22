@@ -17,7 +17,7 @@ describe('MatchtableGenerator', () => {
       match.home.name = "Hometeam";
       match.guest = new Team();
       match.guest.name = "Guestteam";
-      match.date = new Date(1537473028);
+      match.date = new Date("1961-12-17T03:24:00");
 
       return match;
     }
@@ -27,7 +27,8 @@ describe('MatchtableGenerator', () => {
         club: {
           ageClasses: [
             new AgeClass("Herren", "Herren I"),
-            new AgeClass("Herren", "Herren II")
+            new AgeClass("Herren", "Herren II"),
+            new AgeClass("Z-Junioren")
           ],
           id: "someId",
           nameSelector: "SomeName",
@@ -41,8 +42,11 @@ describe('MatchtableGenerator', () => {
       return context;
     }
 
-    it('should convert a single match without team types to latex', () => {
+    it('should arrange single match correctly', () => {
       const singleMatch = buildSampleMatch();
+      singleMatch.home.type = "Z-Junioren";
+      singleMatch.guest.type = "Z-Junioren";
+
       const matches: Match[] = [
         singleMatch
       ];
@@ -52,7 +56,7 @@ describe('MatchtableGenerator', () => {
       const actualLatex: string = matchtableGenerator.generate(matches, context);
 
       expect(actualLatex).toContain(
-        "testtest1234"
+        "\\dayRow{ So, 17.12. &  .  &  .  &  Hom. vs. Gue.   }"
       );
     });
 

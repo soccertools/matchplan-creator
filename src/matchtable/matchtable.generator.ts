@@ -8,6 +8,8 @@ import {
   teamnameShortener,
 } from 'scraperlib';
 
+import { Abbreviation } from '../definitions/abbreviation';
+import { GroupedMatches } from '../definitions/grouped-matches';
 import { MatchplanContext } from '../definitions/matchplan-context';
 import { Week } from '../definitions/week';
 import { LatexGenerator } from "../latex-generator.interface";
@@ -41,11 +43,15 @@ export class MatchtableGenerator implements LatexGenerator {
   }
 
   public generate(matches: Match[], context: MatchplanContext) {
+    const mandatoryDayNumbers = [4, 5, 6];
+
     return this.createLatexMatchtable(
       matches,
       context.club.nameSelector,
       context.club.ageClasses,
-      context.shortener.forbidden
+      context.shortener.forbidden,
+      mandatoryDayNumbers,
+      context.cutter.abbreviations
     );
   }
 
@@ -53,11 +59,16 @@ export class MatchtableGenerator implements LatexGenerator {
     matches: Match[],
     clubNameSelector: string,
     ageClasses: AgeClass[],
-    forbiddenShortenerTerms: string[]
+    forbiddenShortenerTerms: string[],
+    mandatoryDayNumbers: number[],
+    abbreviations: Abbreviation[]
   ): string {
-    const mandatoryDays = [4, 5, 6];
-    const weeklyGroupedMatches: { [id: string]: Match[]; } = MatchplanUtilites.groupMatchesByWeekNumber(matches);
-    const weekendBuckets = MatchplanUtilites.createWeekendBuckets(weeklyGroupedMatches, mandatoryDays, ageClasses);
+    const weeklyGroupedMatches: GroupedMatches = MatchplanUtilites.groupMatchesByWeekNumber(matches);
+    const weekendBuckets = MatchplanUtilites.createWeekendBuckets(
+      weeklyGroupedMatches,
+      mandatoryDayNumbers,
+      ageClasses
+    );
 
     // make weekendBucket object to array of weeks
     let weeks = [];
@@ -87,15 +98,14 @@ export class MatchtableGenerator implements LatexGenerator {
                 if (match === null) {
                   return teamDay += " . ";
                 } else {
-                  const abbrevations = [['Hochstedt', 'Ho.'], ['Vieselbach', 'Vi.']];
                   const blacklist = forbiddenShortenerTerms;
                   const home = teamnameCutter(
                     teamnameShortener(match.home.name, forbiddenShortenerTerms),
-                    abbrevations
+                    abbreviations
                   );
                   const guest = teamnameCutter(
                     teamnameShortener(match.guest.name, forbiddenShortenerTerms),
-                    abbrevations
+                    abbreviations
                   );
                   return teamDay += ' ' + home + ' vs. ' + guest + ' ';
                 }
@@ -104,7 +114,9 @@ export class MatchtableGenerator implements LatexGenerator {
             );
           }
         ).filter(
-          (day, index) => !day.trim().startsWith('.') || mandatoryDays.indexOf(index) !== -1
+          (day, index) =>
+            day.trim().startsWith('.') ||
+            mandatoryDayNumbers.indexOf(index) !== -1
         );
         week.days = days;
         return week;

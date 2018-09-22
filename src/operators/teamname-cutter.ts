@@ -1,8 +1,10 @@
-export function teamnameCutter(teamname: string, defaultReplacements: string[][]) {
+import { Abbreviation } from "../definitions/abbrevation";
+
+export function teamnameCutter(teamname: string, defaultReplacements: Abbreviation[]) {
   // simple string replacements
   defaultReplacements.forEach(
     (replacement) => {
-      teamname = teamname.replace(replacement[0], replacement[1]);
+      teamname = teamname.replace(replacement.name, replacement.abbrevation);
     }
   );
 

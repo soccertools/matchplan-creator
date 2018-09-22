@@ -1,9 +1,5 @@
 matchplan:
   type: list
-  cutter:
-    abbrevations:
-      - { name: Hochstedt, abbrevation: Ho. }
-      - { name: Vieselbach, abbrevation: Vi. }
   shortener:
     forbidden:
       - Erfurt
