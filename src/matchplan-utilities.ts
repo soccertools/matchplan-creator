@@ -36,8 +36,10 @@ export class MatchplanUtilites {
     .filter(
       (ageClassWrapper) => {
         const ageClass = ageClassWrapper.ageClass;
+        const teamTypes = [match.home.type, match.guest.type];
+        const firstAgeSelectorOccurence = teamTypes.indexOf(ageClass.ageSelector);
 
-        if (ageClass.ageSelector === match.home.type) {
+        if (firstAgeSelectorOccurence !== -1) {
           if (!ageClass.nameSelector) {
             return true;
           }
@@ -124,7 +126,8 @@ export class MatchplanUtilites {
       if (groupedMatches[i]) {
         matches = groupedMatches[i];
         matches.forEach(
-          (match) => week.days[Moment(match.date).weekday()].push(match)
+          (match) => week.days[Moment(match.date).weekday()]
+            .push(match)
         );
       }
       result[i] = MatchplanUtilites.expandWeek(week, ageClasses);

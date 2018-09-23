@@ -1,4 +1,4 @@
-import { Abbreviation } from "../definitions/abbrevation";
+import { Abbreviation } from "../definitions/abbreviation";
 
 export function teamnameCutter(teamname: string, defaultReplacements: Abbreviation[]) {
   // simple string replacements
