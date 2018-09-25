@@ -31,10 +31,10 @@ describe('MatchtableGenerator', () => {
       const context: MatchplanContext = {
         club: {
           ageClasses: [
-            new AgeClass("Herren", "Herren I"),
-            new AgeClass("Herren", "Herren II"),
-            new AgeClass("Z-Junioren"),
-            new AgeClass("Valid AgeClass")
+            new AgeClass(0, "Herren", "Herren I"),
+            new AgeClass(1, "Herren", "Herren II"),
+            new AgeClass(2, "Z-Junioren"),
+            new AgeClass(3, "Valid AgeClass")
           ],
           id: "someId",
           nameSelector: "MyTeam",
@@ -128,5 +128,18 @@ describe('MatchtableGenerator', () => {
       expect(actualLatex).toContain(
         "\\dayRow{ So, 17.12. &  .  &  .  &  .  &  MyT. vs. Gue.   }"
       );
+    });
+
+    it('should create multiple weeks for matches in different weeks', () => {
+      const firstWeekMatch = buildSampleMatch();
+
+      const secondWeekMatch = buildSampleMatch();
+      secondWeekMatch.date = new Date("1961-12-24T03:24:00");
+
+      const matches: Match[] = [firstWeekMatch, secondWeekMatch];
+      const context = buildSampleContext();
+
+      const actualLatex: string = matchtableGenerator.generate(matches, context);
+      expect(actualLatex.split("\\weekendRow").length - 1).toBe(2);
     });
 });

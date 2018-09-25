@@ -43,7 +43,7 @@ describe('MatchplanUtilites', () => {
       const match = buildSampleMatch();
       const ageClasses = [];
 
-      expect(MatchplanUtilites.getAgeClassWithIndexOfMatch(match, ageClasses).index)
+      expect(MatchplanUtilites.getAgeClassWithIndexOfMatch(match, "Hometeam", ageClasses).index)
        .toBe(-1);
     });
 
@@ -53,13 +53,13 @@ describe('MatchplanUtilites', () => {
       match.guest.type = "Expected-Class";
 
       const ageClasses = [
-        new AgeClass("Herren"),
-        new AgeClass("A-Junioren"),
-        new AgeClass("Expected-Class"),
-        new AgeClass("Z-Junioren"),
+        new AgeClass(0, "Herren"),
+        new AgeClass(1, "A-Junioren"),
+        new AgeClass(2, "Expected-Class"),
+        new AgeClass(3, "Z-Junioren"),
       ];
 
-      const actualAgeClassWrapper = MatchplanUtilites.getAgeClassWithIndexOfMatch(match, ageClasses);
+      const actualAgeClassWrapper = MatchplanUtilites.getAgeClassWithIndexOfMatch(match, "Hometeam", ageClasses);
 
       expect(actualAgeClassWrapper.index).toBe(2);
       expect(actualAgeClassWrapper.ageClass.ageSelector).toBe("Expected-Class");
@@ -73,13 +73,13 @@ describe('MatchplanUtilites', () => {
     match.guest.type = "Expected-Class";
 
     const ageClasses = [
-      new AgeClass("Herren", "Hometeam II"),
-      new AgeClass("Expected-Class", "Guestteam I"),
-      new AgeClass("Expected-Class", "Hometeam II"),
-      new AgeClass("Z-Junioren"),
+      new AgeClass(0, "Herren", "Hometeam II"),
+      new AgeClass(1, "Expected-Class", "Guestteam I"),
+      new AgeClass(2, "Expected-Class", "Hometeam II"),
+      new AgeClass(3, "Z-Junioren"),
     ];
 
-    const actualAgeClassWrapper = MatchplanUtilites.getAgeClassWithIndexOfMatch(match, ageClasses);
+    const actualAgeClassWrapper = MatchplanUtilites.getAgeClassWithIndexOfMatch(match, "Hometeam", ageClasses);
 
     expect(actualAgeClassWrapper.index).toBe(2);
     expect(actualAgeClassWrapper.ageClass.ageSelector).toBe("Expected-Class");

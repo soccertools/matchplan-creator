@@ -18,7 +18,11 @@ export class MatchplanUtilites {
       return parseInt(numberOfMonth, 10) - 1;
   }
 
-  public static getAgeClassWithIndexOfMatch(match: Match, ageClasses: AgeClass[]): AgeClassWrapper {
+  public static getAgeClassWithIndexOfMatch(
+    match: Match,
+    clubNameSelector: string,
+    ageClasses: AgeClass[]
+  ): AgeClassWrapper {
     if (!match.home.type) {
       return {
         index: -1
@@ -71,13 +75,13 @@ export class MatchplanUtilites {
     return matchedAgeClasses[0];
   }
 
-  public static expandWeek(week: Week, ageClasses: AgeClass[]): Week {
+  public static expandWeek(week: Week, clubNameSelector: string, ageClasses: AgeClass[]): Week {
     week.days = week.days.map(
       (day) => {
         const ageClassBuckets = ageClasses.map(() => null);
         day.forEach(
           (match) => {
-            const i = MatchplanUtilites.getAgeClassWithIndexOfMatch(match, ageClasses).index;
+            const i = MatchplanUtilites.getAgeClassWithIndexOfMatch(match, clubNameSelector, ageClasses).index;
             ageClassBuckets[i] = match;
           }
         );
@@ -107,7 +111,8 @@ export class MatchplanUtilites {
   public static createWeekendBuckets(
     groupedMatches: GroupedMatches,
     mandatoryDays: number[],
-    ageClasses: AgeClass[]
+    ageClasses: AgeClass[],
+    clubNameSelector: string
   ): WeekendBucket {
     const weekNumbers = Object.keys(groupedMatches);
     const result = {};
@@ -130,7 +135,7 @@ export class MatchplanUtilites {
             .push(match)
         );
       }
-      result[i] = MatchplanUtilites.expandWeek(week, ageClasses);
+      result[i] = MatchplanUtilites.expandWeek(week, clubNameSelector, ageClasses);
     }
 
     return result;

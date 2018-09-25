@@ -5,15 +5,18 @@ import * as Mustache from 'mustache';
 
 import {
   Match,
+  Team,
   teamnameShortener,
 } from 'scraperlib';
 
 import { Abbreviation } from '../definitions/abbreviation';
 import { GroupedMatches } from '../definitions/grouped-matches';
+import { MatchMetadata } from '../definitions/match-metadata';
 import { MatchplanContext } from '../definitions/matchplan-context';
 import { Week } from '../definitions/week';
 import { LatexGenerator } from "../latex-generator.interface";
 import { MatchplanUtilites } from "../matchplan-utilities";
+import { groupBy } from '../operators/group-by';
 import { teamnameCutter } from '../operators/teamname-cutter';
 
 Moment.locale('de');
@@ -23,9 +26,9 @@ export class MatchtableGenerator implements LatexGenerator {
   {{=<< >>=}}
   <<#weeks>>
   \\weekendRow{
-    <<#days>>
+    <<#.>>
       \\dayRow{ <<&.>>  }
-    <</days>>
+    <</.>>
   }
   <</weeks>>
   `;
@@ -48,7 +51,9 @@ export class MatchtableGenerator implements LatexGenerator {
     return this.createLatexMatchtable(
       matches,
       context.club.nameSelector,
-      context.club.ageClasses,
+      context.club.ageClasses.map(
+        (ageClassItem, index) => new AgeClass(index, ageClassItem.ageSelector, ageClassItem.nameSelector)
+      ),
       context.shortener.forbidden,
       mandatoryDayNumbers,
       context.cutter.abbreviations
@@ -63,67 +68,124 @@ export class MatchtableGenerator implements LatexGenerator {
     mandatoryDayNumbers: number[],
     abbreviations: Abbreviation[]
   ): string {
-    const weeklyGroupedMatches: GroupedMatches = MatchplanUtilites.groupMatchesByWeekNumber(matches);
-    const weekendBuckets = MatchplanUtilites.createWeekendBuckets(
-      weeklyGroupedMatches,
-      mandatoryDayNumbers,
-      ageClasses
+
+    // enrich match data
+    const matchMetadatas: MatchMetadata[] = matches.map(
+      (match) => {
+        return {
+          ageClass: this.getAgeClassOfMatch(match, clubNameSelector, ageClasses),
+          match,
+          weekDay: Moment(match.date).weekday(),
+          weekNumber: Moment(match.date).isoWeek(),
+        };
+      }
+    ).filter(
+      (matchMetadata) => matchMetadata.ageClass !== null
     );
 
-    // make weekendBucket object to array of weeks
-    let weeks = [];
-    for (const weekKey in weekendBuckets) {
-      if (weekendBuckets.hasOwnProperty(weekKey)) {
-        weeks.push(weekendBuckets[weekKey]);
-      }
+    // group matches in weeks and days
+    const weekGroups = groupBy(matchMetadatas,
+      (itemA, itemB) => itemA.weekNumber === itemB.weekNumber
+    ).map(
+      (weekGroup) => weekGroup.sort( (matchA, matchB) => matchA.weekDay > matchB.weekDay )
+    ).map(
+      (matchesInWeek) => groupBy(matchesInWeek, (wrapper1, wrapper2) => wrapper1.weekDay === wrapper2.weekDay )
+    );
+
+    // transform to latex
+    const latexWeekMatchData: string[][] = weekGroups.map(
+      (week) => week.map(
+        (day) => {
+          const filledDay = ageClasses.map(
+            (ageClass) => {
+              const matchFoundForAgeClass = day.find(
+                (matchWrapper) => matchWrapper.ageClass === ageClass
+              );
+              if (matchFoundForAgeClass) {
+                return matchFoundForAgeClass;
+              }
+              return {
+                ageClass,
+                match: null,
+                weekDay: -1,
+                weekNumber: -1,
+              };
+            }
+          );
+
+          return filledDay.reduce(
+            (acc, matchWrapper, index) => {
+              if (!matchWrapper.match) {
+                return `${acc} & . `;
+              }
+
+              const match = matchWrapper.match;
+              const home = teamnameCutter(
+                teamnameShortener(match.home.name, forbiddenShortenerTerms),
+                abbreviations
+              );
+              const guest = teamnameCutter(
+                teamnameShortener(match.guest.name, forbiddenShortenerTerms),
+                abbreviations
+              );
+              if (index === 0) {
+                acc += Moment(match.date).format("dd, D.M.");
+              }
+              return `${acc} & ${home} vs. ${guest}`;
+            },
+            ""
+          );
+        }
+
+      )
+    );
+
+    console.log("weekNumberGroups", latexWeekMatchData);
+
+    return Mustache.render(this.matchplanTemplate, { weeks: latexWeekMatchData });
+  }
+
+  private getAgeClassOfMatch(match: Match, clubNameSelector: string, ageClasses: AgeClass[]): AgeClass | null {
+    if (ageClasses.length === 0) {
+      throw new Error("no age-class available");
     }
 
-    weeks = weeks.map(
-      (week: Week) => {
-        const days = week.days.map(
-          (day) => {
-            let date: string;
-            const dayMatches = day.filter(
-              (match) => match !== null
-            );
-            if (dayMatches.length === 0) {
-              date = " . ";
-            } else {
-              date = Moment(dayMatches[0].date).format("dd, D.M.");
-            }
-            return day.reduce(
-              (teamDay, match: Match | null, index) => {
-                teamDay += " & ";
+    const matchingAgeClasses = ageClasses.filter(
+      (ageClassItem) => {
+        let nameSelector;
 
-                if (match === null) {
-                  return teamDay += " . ";
-                } else {
-                  const blacklist = forbiddenShortenerTerms;
-                  const home = teamnameCutter(
-                    teamnameShortener(match.home.name, forbiddenShortenerTerms),
-                    abbreviations
-                  );
-                  const guest = teamnameCutter(
-                    teamnameShortener(match.guest.name, forbiddenShortenerTerms),
-                    abbreviations
-                  );
-                  return teamDay += ' ' + home + ' vs. ' + guest + ' ';
-                }
-              },
-              date
-            );
-          }
-        ).filter(
-          (day, index) =>
-            day.trim().startsWith('.') ||
-            mandatoryDayNumbers.indexOf(index) !== -1
-        );
-        week.days = days;
-        return week;
+        if (ageClassItem.nameSelector) {
+          nameSelector = ageClassItem.nameSelector;
+        } else {
+          nameSelector = clubNameSelector;
+        }
+
+        let selectedTeam: Team = match.home;
+        if (match.home.name.indexOf(nameSelector) === -1) {
+          selectedTeam = match.guest;
+        }
+
+        if (selectedTeam.name.indexOf(nameSelector) === -1) {
+          return false;
+        }
+
+        if (selectedTeam.type !== ageClassItem.ageSelector) {
+          return false;
+        }
+
+        return true;
       }
     );
 
-    return Mustache.render(this.matchplanTemplate, { weeks });
+    if (matchingAgeClasses.length > 1) {
+      throw new Error("multiple age class candidates found for match");
+    }
+
+    if (matchingAgeClasses.length === 0) {
+      return null;
+    }
+
+    return matchingAgeClasses[0];
   }
 
 }
