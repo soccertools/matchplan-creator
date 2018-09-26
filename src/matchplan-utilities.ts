@@ -5,131 +5,67 @@ import {
   Team
 } from 'scraperlib';
 import { AgeClass } from './definitions/age-class';
-import { AgeClassWrapper } from './definitions/age-class-wrapper';
-import { GroupedMatches } from './definitions/grouped-matches';
 import { Week } from './definitions/week';
-import { WeekendBucket } from './definitions/weekend-bucket';
 
 Moment.locale('de');
 
 export class MatchplanUtilites {
+
   public static getMonthFromName(nameOfMonth: string): Month {
       const numberOfMonth = Moment().month(nameOfMonth).format("M");
       return parseInt(numberOfMonth, 10) - 1;
   }
 
-  public static getAgeClassWithIndexOfMatch(match: Match, ageClasses: AgeClass[]): AgeClassWrapper {
-    if (!match.home.type) {
-      return {
-        index: -1
-      };
+  public static getAgeClassOfMatch(match: Match, clubNameSelector: string, ageClasses: AgeClass[]): AgeClass | null {
+    if (ageClasses.length === 0) {
+      throw new Error("no age-class available");
     }
 
-    const matchedAgeClasses = ageClasses.map(
-      (item, index) => {
-        return {
-          ageClass: item,
-          index
-        };
-      }
-    )
-    .filter(
-      (ageClassWrapper) => {
-        const ageClass = ageClassWrapper.ageClass;
+    const matchingAgeClasses = ageClasses.filter(
+      (ageClassItem) => {
+        let nameSelector;
 
-        if (ageClass.ageSelector === match.home.type) {
-          if (!ageClass.nameSelector) {
-            return true;
-          }
-
-          if (match.home.name.indexOf(ageClass.nameSelector) !== -1) {
-            return true;
-          }
+        if (ageClassItem.nameSelector) {
+          nameSelector = ageClassItem.nameSelector;
+        } else {
+          nameSelector = clubNameSelector;
         }
 
-        return false;
+        let selectedTeam: Team = match.home;
+        if (match.home.name.indexOf(nameSelector) === -1) {
+          selectedTeam = match.guest;
+        }
+
+        if (selectedTeam.name.indexOf(nameSelector) === -1) {
+          return false;
+        }
+
+        if (selectedTeam.type !== ageClassItem.ageSelector) {
+          return false;
+        }
+
+        return true;
       }
     );
 
-    if (matchedAgeClasses.length > 1) {
-      console.warn(`
-        Found mulitple matches for same team on same day.
-        Continue with first match.`
-      );
-      return matchedAgeClasses[0];
-    } else if (matchedAgeClasses.length === 0) {
-      throw new Error(
-        'no age class found (' +
-        match.home.name + '/' + match.home.type +
-        ' vs. ' +
-        match.guest.name + '/' + match.guest.type + ')'
-      );
+    if (matchingAgeClasses.length > 2) {
+      console.error("too many age classes found", matchingAgeClasses);
+      throw new Error("multiple age class candidates found for match");
     }
 
-    return matchedAgeClasses[0];
-  }
-
-  public static expandWeek(week: Week, ageClasses: AgeClass[]): Week {
-    week.days = week.days.map(
-      (day) => {
-        const ageClassBuckets = ageClasses.map(() => null);
-        day.forEach(
-          (match) => {
-            const i = MatchplanUtilites.getAgeClassWithIndexOfMatch(match, ageClasses).index;
-            ageClassBuckets[i] = match;
-          }
-        );
-        return ageClassBuckets;
+    if (matchingAgeClasses.length === 2) {
+      if (matchingAgeClasses[0].nameSelector.length > matchingAgeClasses[1].nameSelector.length) {
+        return matchingAgeClasses[0];
+      } else {
+        return matchingAgeClasses[1];
       }
-    );
-    return week;
-  }
-
-  public static groupMatchesByWeekNumber(matches: Match[]): GroupedMatches {
-    return matches.reduce(
-      (groups, match) => {
-        const key = Moment(match.date).isoWeek();
-
-        // make sure array for that day exists
-        if (groups[key] === undefined) {
-          groups[key] = [];
-        }
-        // insert into bucket
-        groups[key].push(match);
-
-        return groups;
-      }
-    , {});
-  }
-
-  public static createWeekendBuckets(
-    groupedMatches: GroupedMatches,
-    mandatoryDays: number[],
-    ageClasses: AgeClass[]
-  ): WeekendBucket {
-    const weekNumbers = Object.keys(groupedMatches);
-    const result = {};
-
-    if (Object.keys(groupedMatches).length === 0) {
-      return {};
     }
 
-    const firstWeekNumber = parseInt(weekNumbers[0], 10);
-    const lastWeekNumber = parseInt(weekNumbers[weekNumbers.length - 1], 10);
-
-    let week: Week;
-    let matches: Match[];
-    for (let i = firstWeekNumber; i <= lastWeekNumber; i++) {
-      week = new Week();
-      if (groupedMatches[i]) {
-        matches = groupedMatches[i];
-        matches.forEach(
-          (match) => week.days[Moment(match.date).weekday()].push(match)
-        );
-      }
-      result[i] = MatchplanUtilites.expandWeek(week, ageClasses);
+    if (matchingAgeClasses.length === 0) {
+      return null;
     }
 
-    return result;
+    return matchingAgeClasses[0];
   }
+
 }

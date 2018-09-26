@@ -3,6 +3,10 @@ matchplan:
   shortener:
     forbidden:
       - Erfurt
+  cutter:
+    abbreviations:
+      - { name: Hochstedt, abbreviation: Ho. }
+      - { name: Vieselbach, abbreviation: Vi. }
   table:
     mandatoryDays:
       - Freitag
@@ -12,10 +16,10 @@ matchplan:
     id: 00ES8GNC6K000035VV0AG08LVUPGND5I
     nameSelector: Hochstedt
     ageClasses:
-      - { name: Herren, selector: <nameSelector> I}
-      - { name: Herren, selector: <nameSelector> II}
-      - { name: D-Junioren }
-      - { name: E-Junioren }
-      - { name: F-Junioren, selector: <nameSelector> I }
-      - { name: F-Junioren, selector: <nameSelector> II }
-      - { name: G-Junioren }
+      - { ageSelector: Herren, nameSelector: <nameSelector> I}
+      - { ageSelector: Herren, nameSelector: <nameSelector> II}
+      - { ageSelector: D-Junioren, nameSelector: <nameSelector> II }
+      - { ageSelector: E-Junioren, nameSelector: <nameSelector> II}
+      - { ageSelector: F-Junioren, nameSelector: <nameSelector> I }
+      - { ageSelector: F-Junioren, nameSelector: <nameSelector> II }
+      #- { ageSelector: G-Junioren }

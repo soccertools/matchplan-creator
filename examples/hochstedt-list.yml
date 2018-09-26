@@ -1,0 +1,14 @@
+matchplan:
+  type: list
+  shortener:
+    forbidden:
+      - Erfurt
+    aliases:
+       - { name: SpG SC 1910 Vieselbach I, alias: SpG Vies./Hochst. I }
+       - { name: SpG SC 1910 Vieselbach II, alias: SpG Vies./Hochst. II }
+  prefixer:
+    noPrefix:
+      - Herren
+  club:
+    id: 00ES8GNC6K000035VV0AG08LVUPGND5I
+    nameSelector: Hochstedt
