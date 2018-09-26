@@ -9,6 +9,7 @@ import { MatchplanUtilites } from "../matchplan-utilities";
 
 import * as Moment from 'moment';
 import * as Mustache from 'mustache';
+import { Alias } from '../definitions/alias';
 import { MatchplanContext } from '../definitions/matchplan-context';
 
 Moment.locale('de');
@@ -57,15 +58,23 @@ export class MatchlistGenerator implements LatexGenerator {
   private createLatexMatchplan(
     matches: Match[],
     teamnameBlacklist: string[],
-    aliases: {[teamName: string]: string},
+    aliases: Alias[],
     agegroupIgnorelist: string[]
   ): string {
     const matchData: any[] = matches.map(
       (match) => {
+        const aliasesMap = aliases.reduce(
+          (map, aliasListItem) =>  {
+            map[aliasListItem.name] = aliasListItem.alias;
+            return map;
+          },
+          {}
+        );
+
         const date = Moment(match.date);
         return {
-          guest: teamnameShortener(match.guest.name, teamnameBlacklist, aliases),
-          home: teamnameShortener(match.home.name, teamnameBlacklist, aliases),
+          guest: teamnameShortener(match.guest.name, teamnameBlacklist, aliasesMap),
+          home: teamnameShortener(match.home.name, teamnameBlacklist, aliasesMap),
           prefix: MatchlistGenerator.formatPrefix(match.home, agegroupIgnorelist),
           subtitle: date.format('LLLL') + ' Uhr'
           };

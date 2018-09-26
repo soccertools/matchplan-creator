@@ -4,8 +4,8 @@ matchplan:
     forbidden:
       - Erfurt
     aliases:
-       - { name: SpG SC 1910 Vieselbach I, abbrevation: SpG Vies./Hochst. I }
-       - { name: SpG SC 1910 Vieselbach II, abbrevation: SpG Vies./Hochst. II }
+       - { name: SpG SC 1910 Vieselbach I, alias: SpG Vies./Hochst. I }
+       - { name: SpG SC 1910 Vieselbach II, alias: SpG Vies./Hochst. II }
   prefixer:
     noPrefix:
       - Herren
