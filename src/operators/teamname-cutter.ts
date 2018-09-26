@@ -4,7 +4,7 @@ export function teamnameCutter(teamname: string, defaultReplacements: Abbreviati
   // simple string replacements
   defaultReplacements.forEach(
     (replacement) => {
-      teamname = teamname.replace(replacement.name, replacement.abbrevation);
+      teamname = teamname.replace(replacement.name, replacement.abbreviation);
     }
   );
 
