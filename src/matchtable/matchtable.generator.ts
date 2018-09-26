@@ -10,7 +10,6 @@ import {
 } from 'scraperlib';
 
 import { Abbreviation } from '../definitions/abbreviation';
-import { GroupedMatches } from '../definitions/grouped-matches';
 import { MatchMetadata } from '../definitions/match-metadata';
 import { MatchplanContext } from '../definitions/matchplan-context';
 import { Week } from '../definitions/week';
@@ -82,7 +81,7 @@ export class MatchtableGenerator implements LatexGenerator {
     const matchMetadatas: MatchMetadata[] = matches.map(
       (match) => {
         return {
-          ageClass: this.getAgeClassOfMatch(match, clubNameSelector, ageClasses),
+          ageClass: MatchplanUtilites.getAgeClassOfMatch(match, clubNameSelector, ageClasses),
           match,
           weekDay: Moment(match.date).weekday(),
           weekNumber: Moment(match.date).isoWeek(),
@@ -167,58 +166,6 @@ export class MatchtableGenerator implements LatexGenerator {
     );
 
     return Mustache.render(this.matchplanTemplate, { weeks: latexWeekMatchData });
-  }
-
-  private getAgeClassOfMatch(match: Match, clubNameSelector: string, ageClasses: AgeClass[]): AgeClass | null {
-    if (ageClasses.length === 0) {
-      throw new Error("no age-class available");
-    }
-
-    const matchingAgeClasses = ageClasses.filter(
-      (ageClassItem) => {
-        let nameSelector;
-
-        if (ageClassItem.nameSelector) {
-          nameSelector = ageClassItem.nameSelector;
-        } else {
-          nameSelector = clubNameSelector;
-        }
-
-        let selectedTeam: Team = match.home;
-        if (match.home.name.indexOf(nameSelector) === -1) {
-          selectedTeam = match.guest;
-        }
-
-        if (selectedTeam.name.indexOf(nameSelector) === -1) {
-          return false;
-        }
-
-        if (selectedTeam.type !== ageClassItem.ageSelector) {
-          return false;
-        }
-
-        return true;
-      }
-    );
-
-    if (matchingAgeClasses.length > 2) {
-      console.error("too many age classes found", matchingAgeClasses);
-      throw new Error("multiple age class candidates found for match");
-    }
-
-    if (matchingAgeClasses.length === 2) {
-      if (matchingAgeClasses[0].nameSelector.length > matchingAgeClasses[1].nameSelector.length) {
-        return matchingAgeClasses[0];
-      } else {
-        return matchingAgeClasses[1];
-      }
-    }
-
-    if (matchingAgeClasses.length === 0) {
-      return null;
-    }
-
-    return matchingAgeClasses[0];
   }
 
 }

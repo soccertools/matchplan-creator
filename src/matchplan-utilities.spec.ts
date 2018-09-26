@@ -38,13 +38,23 @@ describe('MatchplanUtilites', () => {
     });
   });
 
-  describe('getAgeClassIndexOfMatch', () => {
-    it('should return index -1 if no home team type was given', () => {
+  describe('getAgeClassOfMatch', () => {
+    it('should return null if no home team type was given', () => {
+      const match = buildSampleMatch();
+      const ageClasses = [
+        new AgeClass(0, "Some-Unused-AgeClass")
+      ];
+
+      expect(MatchplanUtilites.getAgeClassOfMatch(match, "Hometeam", ageClasses))
+       .toBeNull();
+    });
+
+    it('should throw error if no age class was given', () => {
       const match = buildSampleMatch();
       const ageClasses = [];
 
-      expect(MatchplanUtilites.getAgeClassWithIndexOfMatch(match, "Hometeam", ageClasses).index)
-       .toBe(-1);
+      expect(() => MatchplanUtilites.getAgeClassOfMatch(match, "Hometeam", ageClasses))
+       .toThrowError("no age-class available");
     });
 
     it('should return matching ageClass on matching ageSelector', () => {
@@ -59,10 +69,10 @@ describe('MatchplanUtilites', () => {
         new AgeClass(3, "Z-Junioren"),
       ];
 
-      const actualAgeClassWrapper = MatchplanUtilites.getAgeClassWithIndexOfMatch(match, "Hometeam", ageClasses);
+      const actualAgeClass = MatchplanUtilites.getAgeClassOfMatch(match, "Hometeam", ageClasses);
 
-      expect(actualAgeClassWrapper.index).toBe(2);
-      expect(actualAgeClassWrapper.ageClass.ageSelector).toBe("Expected-Class");
+      expect(actualAgeClass.order).toBe(2);
+      expect(actualAgeClass.ageSelector).toBe("Expected-Class");
     });
   });
 
@@ -79,10 +89,10 @@ describe('MatchplanUtilites', () => {
       new AgeClass(3, "Z-Junioren"),
     ];
 
-    const actualAgeClassWrapper = MatchplanUtilites.getAgeClassWithIndexOfMatch(match, "Hometeam", ageClasses);
+    const actualAgeClass = MatchplanUtilites.getAgeClassOfMatch(match, "Hometeam", ageClasses);
 
-    expect(actualAgeClassWrapper.index).toBe(2);
-    expect(actualAgeClassWrapper.ageClass.ageSelector).toBe("Expected-Class");
+    expect(actualAgeClass.order).toBe(2);
+    expect(actualAgeClass.ageSelector).toBe("Expected-Class");
   });
 
 });
