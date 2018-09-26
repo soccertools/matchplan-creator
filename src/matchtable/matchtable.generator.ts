@@ -52,7 +52,16 @@ export class MatchtableGenerator implements LatexGenerator {
       matches,
       context.club.nameSelector,
       context.club.ageClasses.map(
-        (ageClassItem, index) => new AgeClass(index, ageClassItem.ageSelector, ageClassItem.nameSelector)
+        (ageClassItem, index) => {
+          if (ageClassItem.nameSelector) {
+            ageClassItem.nameSelector = ageClassItem.nameSelector.replace("<nameSelector>", context.club.nameSelector);
+          }
+          return new AgeClass(
+            index,
+            ageClassItem.ageSelector,
+            ageClassItem.nameSelector
+          );
+        }
       ),
       context.shortener.forbidden,
       mandatoryDayNumbers,
@@ -95,18 +104,27 @@ export class MatchtableGenerator implements LatexGenerator {
     // transform to latex
     const latexWeekMatchData: string[][] = weekGroups.map(
       (week) => week.map(
-        (day) => {
+        (dayWrapper) => {
+          // associate matches to age classes (later columns)
           const filledDay = ageClasses.map(
             (ageClass) => {
-              const matchFoundForAgeClass = day.find(
+              const matchesFoundForAgeClass = dayWrapper.filter(
                 (matchWrapper) => matchWrapper.ageClass === ageClass
               );
-              if (matchFoundForAgeClass) {
-                return matchFoundForAgeClass;
+
+              if (matchesFoundForAgeClass.length > 1) {
+                  matchesFoundForAgeClass[0].competingMatches = matchesFoundForAgeClass.slice(1);
               }
+
+              if (matchesFoundForAgeClass.length > 0) {
+                return matchesFoundForAgeClass[0];
+              }
+              const dummyMatch = new Match();
+              dummyMatch.date = dayWrapper[0].match.date;
+
               return {
                 ageClass,
-                match: null,
+                match: dummyMatch,
                 weekDay: -1,
                 weekNumber: -1,
               };
@@ -115,11 +133,21 @@ export class MatchtableGenerator implements LatexGenerator {
 
           return filledDay.reduce(
             (acc, matchWrapper, index) => {
-              if (!matchWrapper.match) {
-                return `${acc} & . `;
+              let additionals = " ";
+              if (matchWrapper.competingMatches) {
+                additionals = ",... ";
               }
 
               const match = matchWrapper.match;
+
+              if (index === 0) {
+                acc += Moment(match.date).format("dd, D.M.");
+              }
+
+              if (!match.home.name) { // dummy match detection
+                return `${acc} &  . `;
+              }
+
               const home = teamnameCutter(
                 teamnameShortener(match.home.name, forbiddenShortenerTerms),
                 abbreviations
@@ -128,10 +156,8 @@ export class MatchtableGenerator implements LatexGenerator {
                 teamnameShortener(match.guest.name, forbiddenShortenerTerms),
                 abbreviations
               );
-              if (index === 0) {
-                acc += Moment(match.date).format("dd, D.M.");
-              }
-              return `${acc} & ${home} vs. ${guest}`;
+
+              return `${acc} &  ${home} vs. ${guest}${additionals}`;
             },
             ""
           );
@@ -139,8 +165,6 @@ export class MatchtableGenerator implements LatexGenerator {
 
       )
     );
-
-    console.log("weekNumberGroups", latexWeekMatchData);
 
     return Mustache.render(this.matchplanTemplate, { weeks: latexWeekMatchData });
   }
@@ -177,8 +201,17 @@ export class MatchtableGenerator implements LatexGenerator {
       }
     );
 
-    if (matchingAgeClasses.length > 1) {
+    if (matchingAgeClasses.length > 2) {
+      console.error("too many age classes found", matchingAgeClasses);
       throw new Error("multiple age class candidates found for match");
+    }
+
+    if (matchingAgeClasses.length === 2) {
+      if (matchingAgeClasses[0].nameSelector.length > matchingAgeClasses[1].nameSelector.length) {
+        return matchingAgeClasses[0];
+      } else {
+        return matchingAgeClasses[1];
+      }
     }
 
     if (matchingAgeClasses.length === 0) {

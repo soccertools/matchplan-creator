@@ -31,8 +31,8 @@ describe('MatchtableGenerator', () => {
       const context: MatchplanContext = {
         club: {
           ageClasses: [
-            new AgeClass(0, "Herren", "Herren I"),
-            new AgeClass(1, "Herren", "Herren II"),
+            new AgeClass(0, "Herren", "MyTeam I"),
+            new AgeClass(1, "Herren", "MyTeam II"),
             new AgeClass(2, "Z-Junioren"),
             new AgeClass(3, "Valid AgeClass")
           ],
@@ -53,14 +53,25 @@ describe('MatchtableGenerator', () => {
 
     it('should arrange single match correctly', () => {
       const singleMatch = buildSampleMatch();
-      const matches: Match[] = [
-        singleMatch
-      ];
+      const matches: Match[] = [singleMatch];
       const context = buildSampleContext();
       const actualLatex: string = matchtableGenerator.generate(matches, context);
 
       expect(actualLatex).toContain(
         "\\dayRow{ So, 17.12. &  .  &  .  &  MyT. vs. Gue.  &  .   }"
+      );
+    });
+
+    it('should arrange single match with multiple age class candidates correctly', () => {
+      const singleMatch = buildSampleMatch();
+      singleMatch.home.type = "Herren";
+      singleMatch.home.name = "MyTeam II";
+      const matches: Match[] = [singleMatch];
+      const context = buildSampleContext();
+      const actualLatex: string = matchtableGenerator.generate(matches, context);
+
+      expect(actualLatex).toContain(
+        "\\dayRow{ So, 17.12. &  .  &  MyT. vs. Gue.  &  .  &  .   }"
       );
     });
 
@@ -126,7 +137,7 @@ describe('MatchtableGenerator', () => {
       const actualLatex: string = matchtableGenerator.generate(matches, context);
 
       expect(actualLatex).toContain(
-        "\\dayRow{ So, 17.12. &  .  &  .  &  .  &  MyT. vs. Gue.   }"
+        "\\dayRow{ So, 17.12. &  .  &  .  &  .  &  Oth. vs. MyT.   }"
       );
     });
 

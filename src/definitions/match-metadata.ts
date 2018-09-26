@@ -6,4 +6,5 @@ export interface MatchMetadata {
   weekNumber: number;
   match: Match;
   ageClass: AgeClass;
+  competingMatches?: Match[];
 }
