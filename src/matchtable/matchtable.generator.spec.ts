@@ -58,7 +58,7 @@ describe('MatchtableGenerator', () => {
       const actualLatex: string = matchtableGenerator.generate(matches, context);
 
       expect(actualLatex).toContain(
-        "\\dayRow{ So, 17.12. &  .  &  .  &  MyT. vs. Gue.  &  .   }"
+        "\\dayRow{ So, 17.12. &    &    &  MyT. - Gue. 03:12  &     }"
       );
     });
 
@@ -71,7 +71,7 @@ describe('MatchtableGenerator', () => {
       const actualLatex: string = matchtableGenerator.generate(matches, context);
 
       expect(actualLatex).toContain(
-        "\\dayRow{ So, 17.12. &  .  &  MyT. vs. Gue.  &  .  &  .   }"
+        "\\dayRow{ So, 17.12. &    &  MyT. - Gue. 03:12  &    &     }"
       );
     });
 
@@ -89,10 +89,10 @@ describe('MatchtableGenerator', () => {
       const actualLatex: string = matchtableGenerator.generate(matches, context);
 
       expect(actualLatex).toContain(
-        "\\dayRow{ Sa, 16.12. &  .  &  .  &  MyT. vs. Gue.  &  .   }"
+        "\\dayRow{ Sa, 16.12. &    &    &  MyT. - Gue. 03:12  &     }"
       );
       expect(actualLatex).toContain(
-        "\\dayRow{ So, 17.12. &  .  &  .  &  MyT. vs. Gue.  &  .   }"
+        "\\dayRow{ So, 17.12. &    &    &  MyT. - Gue. 03:12  &     }"
       );
     });
 
@@ -110,7 +110,7 @@ describe('MatchtableGenerator', () => {
 
       const actualLatex: string = matchtableGenerator.generate(matches, context);
       expect(actualLatex).toContain(
-        "\\dayRow{ So, 17.12. &  .  &  .  &  MyT. vs. Gue.,...  &  .   }"
+        "\\dayRow{ So, 17.12. &    &    &  MyT. - Gue. 03:12,...  &     }"
       );
     });
 
@@ -121,7 +121,7 @@ describe('MatchtableGenerator', () => {
       const context = buildSampleContext();
       const actualLatex: string = matchtableGenerator.generate(matches, context);
 
-      expect(actualLatex).not.toContain("MyT. vs. Gue.");
+      expect(actualLatex).not.toContain("MyT. - Gue.");
     });
 
     it('should use ageClass of guest if guest is my team', () => {
@@ -137,7 +137,7 @@ describe('MatchtableGenerator', () => {
       const actualLatex: string = matchtableGenerator.generate(matches, context);
 
       expect(actualLatex).toContain(
-        "\\dayRow{ So, 17.12. &  .  &  .  &  .  &  Oth. vs. MyT.   }"
+        "\\dayRow{ So, 17.12. &    &    &    &  Oth. - MyT. 03:12   }"
       );
     });
 
