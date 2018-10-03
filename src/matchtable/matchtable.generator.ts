@@ -119,70 +119,78 @@ export class MatchtableGenerator implements LatexGenerator {
   ): string[][] {
     return weekGroups.map(
       (week) => week.map(
-        (dayWrapper) => {
-          // associate matches to age classes (later columns)
-          const filledDay = ageClasses.map(
-            (ageClass) => {
-              const matchesFoundForAgeClass = dayWrapper.filter(
-                (matchWrapper) => matchWrapper.ageClass === ageClass
-              );
-
-              if (matchesFoundForAgeClass.length > 1) {
-                  matchesFoundForAgeClass[0].competingMatches = matchesFoundForAgeClass
-                  .map( (metadata) => metadata.match )
-                  .slice(1);
-              }
-
-              if (matchesFoundForAgeClass.length > 0) {
-                return matchesFoundForAgeClass[0];
-              }
-              const dummyMatch = new Match();
-              dummyMatch.date = dayWrapper[0].match.date;
-
-              return {
-                ageClass,
-                match: dummyMatch,
-                weekDay: -1,
-                weekNumber: -1,
-              };
-            }
-          );
-
-          return filledDay.reduce(
-            (acc, matchWrapper, index) => {
-              let additionals = " ";
-              if (matchWrapper.competingMatches) {
-                additionals = " ... ";
-              }
-
-              const match = matchWrapper.match;
-
-              if (index === 0) {
-                acc += Moment(match.date).format("dd, D.M.");
-              }
-
-              if (!match.home.name) { // dummy match detection
-                return `${acc} &   `;
-              }
-
-              const home = teamnameCutter(
-                teamnameShortener(match.home.name, forbiddenShortenerTerms),
-                abbreviations
-              );
-              const guest = teamnameCutter(
-                teamnameShortener(match.guest.name, forbiddenShortenerTerms),
-                abbreviations
-              );
-              const time = Moment(match.date).format("HH:MM");
-
-              return `${acc} &  \\matchSum{${home}}{${guest}}{${time}}${additionals}`;
-            },
-            ""
-          );
-        }
-
+        (dayWrapper) => this.associateMatchMetadataToAgeClasses(dayWrapper, ageClasses)
+      ).map(
+        (matchMetadatas) => this.latexify(matchMetadatas, forbiddenShortenerTerms, abbreviations)
       )
     );
   }
 
-}
+  private associateMatchMetadataToAgeClasses(matches: MatchMetadata[], ageClasses: AgeClass[]): MatchMetadata[] {
+      // associate matches to age classes (later columns)
+      return ageClasses.map(
+        (ageClass) => {
+          const matchesFoundForAgeClass = matches.filter(
+            (matchWrapper) => matchWrapper.ageClass === ageClass
+          );
+
+          if (matchesFoundForAgeClass.length > 1) {
+              matchesFoundForAgeClass[0].competingMatches = matchesFoundForAgeClass
+              .map( (metadata) => metadata.match )
+              .slice(1);
+          }
+
+          if (matchesFoundForAgeClass.length > 0) {
+            return matchesFoundForAgeClass[0];
+          }
+          const dummyMatch = new Match();
+          dummyMatch.date = matches[0].match.date;
+
+          return {
+            ageClass,
+            match: dummyMatch,
+            weekDay: -1,
+            weekNumber: -1,
+          };
+        }
+      );
+    }
+
+    private latexify(
+      matchMetadatas: MatchMetadata[],
+      forbiddenShortenerTerms: any,
+      abbreviations: Abbreviation[]
+    ): string {
+      return matchMetadatas.reduce(
+        (acc, matchWrapper, index) => {
+          let additionals = " ";
+          if (matchWrapper.competingMatches) {
+            additionals = " ... ";
+          }
+
+          const match = matchWrapper.match;
+
+          if (index === 0) {
+            acc += Moment(match.date).format("dd, D.M.");
+          }
+
+          if (!match.home.name) { // dummy match detection
+            return `${acc} &   `;
+          }
+
+          const home = teamnameCutter(
+            teamnameShortener(match.home.name, forbiddenShortenerTerms),
+            abbreviations
+          );
+          const guest = teamnameCutter(
+            teamnameShortener(match.guest.name, forbiddenShortenerTerms),
+            abbreviations
+          );
+          const time = Moment(match.date).format("HH:MM");
+
+          return `${acc} &  \\matchSum{${home}}{${guest}}{${time}}${additionals}`;
+        },
+        ""
+      );
+    }
+  }
