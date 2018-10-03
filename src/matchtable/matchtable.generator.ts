@@ -83,13 +83,14 @@ export class MatchtableGenerator implements LatexGenerator {
         return {
           ageClass: MatchplanUtilites.getAgeClassOfMatch(match, clubNameSelector, ageClasses),
           match,
-          weekDay: Moment(match.date).weekday(),
+          weekDay: Moment(match.date).isoWeekday() - 1,
           weekNumber: Moment(match.date).isoWeek(),
         };
       }
     ).filter(
       (matchMetadata) => matchMetadata.ageClass !== null
     );
+
     const weekGroups = this.groupMatchesByWeekAndDays(matchMetadatas);
     const latexWeekMatchData: string[][] = this.createFormattedArray(
       weekGroups,
@@ -118,11 +119,46 @@ export class MatchtableGenerator implements LatexGenerator {
     abbreviations: Abbreviation[]
   ): string[][] {
     return weekGroups.map(
+      (matchMetadatas) => this.ensureObligatoryDays(matchMetadatas, ageClasses, [4, 5, 6])
+    ).map(
       (week) => week.map(
         (dayWrapper) => this.associateMatchMetadataToAgeClasses(dayWrapper, ageClasses)
       ).map(
-        (matchMetadatas) => this.latexify(matchMetadatas, forbiddenShortenerTerms, abbreviations)
+        (completeMatchMetadatas) => this.latexify(completeMatchMetadatas, forbiddenShortenerTerms, abbreviations)
       )
+    );
+  }
+
+  private ensureObligatoryDays(
+    matchMetadatasWeek: MatchMetadata[][],
+    ageClasses: AgeClass[],
+    obligatoryDayOfWeekNumbers: number[]
+  ) {
+    obligatoryDayOfWeekNumbers.forEach(
+      (dayNumber) => {
+        if (!matchMetadatasWeek.some((metadata) => metadata[0].weekDay === dayNumber)) {
+          if (ageClasses.length === 0) {
+            throw new Error('no age class found');
+          }
+
+          const dummyMatch = new Match();
+          dummyMatch.date = Moment(matchMetadatasWeek[0][0].match.date).startOf('week').add(dayNumber, 'days').toDate();
+
+          matchMetadatasWeek.push(
+            [
+              {
+                ageClass: ageClasses[0],
+                match: dummyMatch,
+                weekDay: dayNumber,
+                weekNumber: -1,
+              }
+            ]
+          );
+        }
+      }
+    );
+    return matchMetadatasWeek.sort(
+      (a, b) => a[0].weekDay - b[0].weekDay
     );
   }
 
