@@ -152,7 +152,7 @@ export class MatchtableGenerator implements LatexGenerator {
             (acc, matchWrapper, index) => {
               let additionals = " ";
               if (matchWrapper.competingMatches) {
-                additionals = ",... ";
+                additionals = " ... ";
               }
 
               const match = matchWrapper.match;
@@ -175,7 +175,7 @@ export class MatchtableGenerator implements LatexGenerator {
               );
               const time = Moment(match.date).format("HH:MM");
 
-              return `${acc} &  ${home} - ${guest} ${time}${additionals}`;
+              return `${acc} &  \\matchSum{${home}}{${guest}}{${time}}${additionals}`;
             },
             ""
           );
