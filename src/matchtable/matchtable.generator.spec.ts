@@ -64,7 +64,7 @@ describe('MatchtableGenerator', () => {
         "\\dayRow{ Sa, 16.12. &    &    &    &     }"
       );
       expect(actualLatex).toContain(
-        "\\dayRow{ So, 17.12. &    &    &  \\matchSum{MyT.}{Gue.}{03:12}  &     }"
+        "\\dayRow{ So, 17.12. &    &    &  \\matchSum{MyT.}{Gue.}{03:24}  &     }"
       );
     });
 
@@ -77,7 +77,7 @@ describe('MatchtableGenerator', () => {
       const actualLatex: string = matchtableGenerator.generate(matches, context);
 
       expect(actualLatex).toContain(
-        "\\dayRow{ So, 17.12. &    &  \\matchSum{MyT.}{Gue.}{03:12}  &    &     }"
+        "\\dayRow{ So, 17.12. &    &  \\matchSum{MyT.}{Gue.}{03:24}  &    &     }"
       );
     });
 
@@ -95,10 +95,10 @@ describe('MatchtableGenerator', () => {
       const actualLatex: string = matchtableGenerator.generate(matches, context);
 
       expect(actualLatex).toContain(
-        "\\dayRow{ Sa, 16.12. &    &    &  \\matchSum{MyT.}{Gue.}{03:12}  &     }"
+        "\\dayRow{ Sa, 16.12. &    &    &  \\matchSum{MyT.}{Gue.}{03:24}  &     }"
       );
       expect(actualLatex).toContain(
-        "\\dayRow{ So, 17.12. &    &    &  \\matchSum{MyT.}{Gue.}{03:12}  &     }"
+        "\\dayRow{ So, 17.12. &    &    &  \\matchSum{MyT.}{Gue.}{03:24}  &     }"
       );
     });
 
@@ -116,7 +116,7 @@ describe('MatchtableGenerator', () => {
 
       const actualLatex: string = matchtableGenerator.generate(matches, context);
       expect(actualLatex).toContain(
-        "\\dayRow{ So, 17.12. &    &    &  \\matchSum{MyT.}{Gue.}{03:12} ...  &     }"
+        "\\dayRow{ So, 17.12. &    &    &  \\matchSum{MyT.}{Gue.}{03:24} ...  &     }"
       );
     });
 
@@ -143,7 +143,7 @@ describe('MatchtableGenerator', () => {
       const actualLatex: string = matchtableGenerator.generate(matches, context);
 
       expect(actualLatex).toContain(
-        "\\dayRow{ So, 17.12. &    &    &    &  \\matchSum{Oth.}{MyT.}{03:12}   }"
+        "\\dayRow{ So, 17.12. &    &    &    &  \\matchSum{Oth.}{MyT.}{03:24}   }"
       );
     });
 

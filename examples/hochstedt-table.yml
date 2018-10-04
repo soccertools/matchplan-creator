@@ -19,7 +19,7 @@ matchplan:
       - { ageSelector: Herren, nameSelector: <nameSelector> I}
       - { ageSelector: Herren, nameSelector: <nameSelector> II}
       - { ageSelector: D-Junioren, nameSelector: <nameSelector> II }
-      - { ageSelector: E-Junioren, nameSelector: <nameSelector> II}
+      - { ageSelector: E-Junioren, nameSelector: Vieselbach II}
       - { ageSelector: F-Junioren, nameSelector: <nameSelector> I }
       - { ageSelector: F-Junioren, nameSelector: <nameSelector> II }
       #- { ageSelector: G-Junioren }

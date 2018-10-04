@@ -222,7 +222,7 @@ export class MatchtableGenerator implements LatexGenerator {
             teamnameShortener(match.guest.name, forbiddenShortenerTerms),
             abbreviations
           );
-          const time = Moment(match.date).format("HH:MM");
+          const time = Moment(match.date).format("kk:mm");
 
           return `${acc} &  \\matchSum{${home}}{${guest}}{${time}}${additionals}`;
         },
