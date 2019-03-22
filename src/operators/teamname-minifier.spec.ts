@@ -17,6 +17,13 @@ describe('TeamnameMinifier', () => {
     expect(teamnameMinifier(teamname, blacklist, [])).toBe(expectedAbbreviation);
   });
 
+  it('should cut names with more than 12 characters', () => {
+    const teamname = "SV Any VeryLongClubName";
+    const expectedAbbreviation = "VeryLongClu.";
+
+    expect(teamnameMinifier(teamname, [], [])).toBe(expectedAbbreviation);
+  });
+
   it('should cut names if all parts are blacklisted', () => {
     const blacklist = ['Sport-Freunde', 'Musterbach'];
     const teamname = "Sport-Freunde Musterbach";

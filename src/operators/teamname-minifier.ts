@@ -34,5 +34,9 @@ export function teamnameMinifier(teamname: string, termBlacklist: string[], defa
   lastPart = preferFirstNamePart(lastPart, '/');
   lastPart = preferFirstNamePart(lastPart, '-');
 
+  if (lastPart.length > 12) {
+    lastPart = lastPart.substr(0, 11) + ".";
+  }
+
   return lastPart;
 }

@@ -6,6 +6,7 @@ matchplan:
       - Rapid
       - Fortuna
       - Union
+      - Empor
   cutter:
     abbreviations:
       - { name: Hochstedt, abbreviation: Ho. }
