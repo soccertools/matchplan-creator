@@ -5,7 +5,7 @@ import * as YAML from "yaml";
 import { LatexGenerator } from "./latex-generator.interface";
 import { MatchService } from "./match.service";
 import { MatchlistGenerator } from "./matchlist/matchlist.generator";
-import { MatchplanUtilites } from "./matchplan-utilities";
+import { MatchplanUtilities } from "./matchplan-utilities";
 import { MatchtableGenerator } from "./matchtable/matchtable.generator";
 
 export class AppWrapper {
@@ -29,7 +29,7 @@ export class AppWrapper {
           if (!configuration.matchplan) {
             throw new Error('configuration is missing property "matchplan"');
           }
-          const month = MatchplanUtilites.getMonthFromName(nameOfMonth);
+          const month = MatchplanUtilities.getMonthFromName(nameOfMonth);
 
           let generator: LatexGenerator;
 

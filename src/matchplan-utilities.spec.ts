@@ -1,9 +1,9 @@
 import "jasmine";
 import { Match, Month, Team } from "scraperlib";
 import { AgeClass } from "./definitions/age-class";
-import { MatchplanUtilites } from "./matchplan-utilities";
+import { MatchplanUtilities } from "./matchplan-utilities";
 
-describe('MatchplanUtilites', () => {
+describe('MatchplanUtilities', () => {
   function buildSampleMatch(): Match {
     const match = new Match();
     match.home = new Team();
@@ -20,21 +20,21 @@ describe('MatchplanUtilites', () => {
       const nameOfMonth = "Januar";
       const expectedEnum = Month.January;
 
-      expect(MatchplanUtilites.getMonthFromName(nameOfMonth)).toBe(expectedEnum);
+      expect(MatchplanUtilities.getMonthFromName(nameOfMonth)).toBe(expectedEnum);
     });
 
     it('should convert Februar to associated enum', () => {
       const nameOfMonth = "Februar";
       const expectedEnum = Month.February;
 
-      expect(MatchplanUtilites.getMonthFromName(nameOfMonth)).toBe(expectedEnum);
+      expect(MatchplanUtilities.getMonthFromName(nameOfMonth)).toBe(expectedEnum);
     });
 
     it('should convert Dezember to associated enum', () => {
       const nameOfMonth = "Dezember";
       const expectedEnum = Month.December;
 
-      expect(MatchplanUtilites.getMonthFromName(nameOfMonth)).toBe(expectedEnum);
+      expect(MatchplanUtilities.getMonthFromName(nameOfMonth)).toBe(expectedEnum);
     });
   });
 
@@ -45,7 +45,7 @@ describe('MatchplanUtilites', () => {
         new AgeClass(0, "Some-Unused-AgeClass")
       ];
 
-      expect(MatchplanUtilites.getAgeClassOfMatch(match, "Hometeam", ageClasses))
+      expect(MatchplanUtilities.getAgeClassOfMatch(match, "Hometeam", ageClasses))
        .toBeNull();
     });
 
@@ -53,7 +53,7 @@ describe('MatchplanUtilites', () => {
       const match = buildSampleMatch();
       const ageClasses = [];
 
-      expect(() => MatchplanUtilites.getAgeClassOfMatch(match, "Hometeam", ageClasses))
+      expect(() => MatchplanUtilities.getAgeClassOfMatch(match, "Hometeam", ageClasses))
        .toThrowError("no age-class available");
     });
 
@@ -69,7 +69,7 @@ describe('MatchplanUtilites', () => {
         new AgeClass(3, "Z-Junioren"),
       ];
 
-      const actualAgeClass = MatchplanUtilites.getAgeClassOfMatch(match, "Hometeam", ageClasses);
+      const actualAgeClass = MatchplanUtilities.getAgeClassOfMatch(match, "Hometeam", ageClasses);
 
       expect(actualAgeClass.order).toBe(2);
       expect(actualAgeClass.ageSelector).toBe("Expected-Class");
@@ -89,7 +89,7 @@ describe('MatchplanUtilites', () => {
       new AgeClass(3, "Z-Junioren"),
     ];
 
-    const actualAgeClass = MatchplanUtilites.getAgeClassOfMatch(match, "Hometeam", ageClasses);
+    const actualAgeClass = MatchplanUtilities.getAgeClassOfMatch(match, "Hometeam", ageClasses);
 
     expect(actualAgeClass.order).toBe(2);
     expect(actualAgeClass.ageSelector).toBe("Expected-Class");

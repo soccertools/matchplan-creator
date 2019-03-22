@@ -5,11 +5,10 @@ import {
   Team
 } from 'scraperlib';
 import { AgeClass } from './definitions/age-class';
-import { Week } from './definitions/week';
 
 Moment.locale('de');
 
-export class MatchplanUtilites {
+export class MatchplanUtilities {
 
   public static getMonthFromName(nameOfMonth: string): Month {
       const numberOfMonth = Moment().month(nameOfMonth).format("M");

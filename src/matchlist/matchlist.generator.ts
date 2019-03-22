@@ -4,8 +4,6 @@ import {
   teamnameShortener,
 } from 'scraperlib';
 import { LatexGenerator } from "../latex-generator.interface";
-import { MatchService } from "../match.service";
-import { MatchplanUtilites } from "../matchplan-utilities";
 
 import * as Moment from 'moment';
 import * as Mustache from 'mustache';

@@ -3,6 +3,9 @@ matchplan:
   shortener:
     forbidden:
       - Erfurt
+      - Rapid
+      - Fortuna
+      - Union
   cutter:
     abbreviations:
       - { name: Hochstedt, abbreviation: Ho. }

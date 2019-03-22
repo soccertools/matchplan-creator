@@ -14,9 +14,10 @@ import { MatchMetadata } from '../definitions/match-metadata';
 import { MatchplanContext } from '../definitions/matchplan-context';
 import { Week } from '../definitions/week';
 import { LatexGenerator } from "../latex-generator.interface";
-import { MatchplanUtilites } from "../matchplan-utilities";
+import { MatchplanUtilities } from "../matchplan-utilities";
 import { groupBy } from '../operators/group-by';
 import { teamnameCutter } from '../operators/teamname-cutter';
+import { teamnameMinifier } from '../operators/teamname-minifier';
 
 Moment.locale('de');
 
@@ -81,7 +82,7 @@ export class MatchtableGenerator implements LatexGenerator {
     const matchMetadatas: MatchMetadata[] = matches.map(
       (match) => {
         return {
-          ageClass: MatchplanUtilites.getAgeClassOfMatch(match, clubNameSelector, ageClasses),
+          ageClass: MatchplanUtilities.getAgeClassOfMatch(match, clubNameSelector, ageClasses),
           match,
           weekDay: Moment(match.date).isoWeekday() - 1,
           weekNumber: Moment(match.date).isoWeek(),
@@ -214,12 +215,14 @@ export class MatchtableGenerator implements LatexGenerator {
             return `${acc} &   `;
           }
 
-          const home = teamnameCutter(
-            teamnameShortener(match.home.name, forbiddenShortenerTerms),
+          const home = teamnameMinifier(
+            match.home.name,
+            forbiddenShortenerTerms,
             abbreviations
           );
-          const guest = teamnameCutter(
-            teamnameShortener(match.guest.name, forbiddenShortenerTerms),
+          const guest = teamnameMinifier(
+            match.guest.name,
+            forbiddenShortenerTerms,
             abbreviations
           );
           const time = Moment(match.date).format("kk:mm");

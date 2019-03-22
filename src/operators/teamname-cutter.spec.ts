@@ -1,7 +1,7 @@
 import "jasmine";
 import { teamnameCutter } from "./teamname-cutter";
 
-describe('MatchplanUtilites', () => {
+describe('MatchplanUtilities', () => {
   it('should cut basic teamnames', () => {
     const teamname = "Musterhausen";
     const expectedAbbreviation = "Mus.";
