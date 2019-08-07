@@ -147,6 +147,23 @@ describe('MatchtableGenerator', () => {
       );
     });
 
+    it('should not include team name containing a valid team name', () => {
+      const match = buildSampleMatch();
+      match.guest.name = "OtherTeam";
+      match.guest.type = "Herren";
+
+      match.home.name = "MyTeam III";
+      match.home.type = "Herren";
+
+      const matches: Match[] = [match];
+      const context = buildSampleContext();
+      const actualLatex: string = matchtableGenerator.generate(matches, context);
+
+      expect(actualLatex).not.toContain(
+        "MyTeam"
+      );
+    });
+
     it('should create multiple weeks for matches in different weeks', () => {
       const firstWeekMatch = buildSampleMatch();
 
