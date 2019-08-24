@@ -95,4 +95,19 @@ describe('MatchplanUtilities', () => {
     expect(actualAgeClass.ageSelector).toBe("Expected-Class");
   });
 
+  it('should return null if name is longer than nameSelector', () => {
+    const match = buildSampleMatch();
+    match.home.name = "Hometeam II";
+    match.home.type = "Expected-Class";
+    match.guest.type = "Expected-Class";
+
+    const ageClasses = [
+      new AgeClass(2, "Expected-Class", "Hometeam I")
+    ];
+
+    const actualAgeClass = MatchplanUtilities.getAgeClassOfMatch(match, "Hometeam", ageClasses);
+
+    expect(actualAgeClass).toBeNull();
+  });
+
 });

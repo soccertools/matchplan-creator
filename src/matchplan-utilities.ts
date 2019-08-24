@@ -30,15 +30,27 @@ export class MatchplanUtilities {
           nameSelector = clubNameSelector;
         }
 
+        // try to match home team
         let selectedTeam: Team = match.home;
         if (match.home.name.indexOf(nameSelector) === -1) {
           selectedTeam = match.guest;
         }
 
+        // try to match guest team
         if (selectedTeam.name.indexOf(nameSelector) === -1) {
           return false;
         }
 
+        const nameSelectorEndPosition = selectedTeam.name.indexOf(nameSelector) + nameSelector.length;
+
+        if (
+          selectedTeam.name.length >= nameSelectorEndPosition &&
+          selectedTeam.name[nameSelectorEndPosition - 1] === selectedTeam.name[nameSelectorEndPosition]
+        ) {
+          return false;
+        }
+
+        // match age selector
         if (selectedTeam.type !== ageClassItem.ageSelector) {
           return false;
         }

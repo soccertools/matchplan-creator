@@ -4,19 +4,15 @@ import * as Moment from 'moment';
 import * as Mustache from 'mustache';
 
 import {
-  Match,
-  Team,
-  teamnameShortener,
+  Match
 } from 'scraperlib';
 
 import { Abbreviation } from '../definitions/abbreviation';
 import { MatchMetadata } from '../definitions/match-metadata';
 import { MatchplanContext } from '../definitions/matchplan-context';
-import { Week } from '../definitions/week';
 import { LatexGenerator } from "../latex-generator.interface";
 import { MatchplanUtilities } from "../matchplan-utilities";
 import { groupBy } from '../operators/group-by';
-import { teamnameCutter } from '../operators/teamname-cutter';
 import { teamnameMinifier } from '../operators/teamname-minifier';
 
 Moment.locale('de');
