@@ -19,14 +19,12 @@ Moment.locale('de');
 
 export class MatchtableGenerator implements LatexGenerator {
   private static defaultLatexTemplate = `
-  {{=<< >>=}}
-  <<#weeks>>
-  \\weekendRow{
-    <<#.>>
-      \\dayRow{ <<&.>>  }
-    <</.>>
-  }
-  <</weeks>>
+{{=<< >>=}}
+<<#weeks>>
+<<#.>>
+<<&.>>
+<</.>>
+<</weeks>>
   `;
 
   private matchplanTemplate: string;
@@ -204,11 +202,11 @@ export class MatchtableGenerator implements LatexGenerator {
           const match = matchWrapper.match;
 
           if (index === 0) {
-            acc += Moment(match.date).format("dd, D.M.");
+            acc += `"${Moment(match.date).format("dd, D.M.")}"`;
           }
 
           if (!match.home.name) { // dummy match detection
-            return `${acc} &   `;
+            return `${acc} ,   `;
           }
 
           const home = teamnameMinifier(
@@ -223,7 +221,7 @@ export class MatchtableGenerator implements LatexGenerator {
           );
           const time = Moment(match.date).format("kk:mm");
 
-          return `${acc} &  \\matchSum{${home}}{${guest}}{${time}}${additionals}`;
+          return `${acc} ,  ${home} - ${guest} ${time} ${additionals}`;
         },
         ""
       );

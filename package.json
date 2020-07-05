@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Create latex matchplans",
   "scripts": {
-    "start": "npm run build && node .",
-    "build": "npm test && rm -Rf ./dist && ./node_modules/.bin/tsc",
+    "start": "node .",
+    "build": "rm -Rf ./dist && ./node_modules/.bin/tsc",
     "test": "npm run lint && jasmine-ts \"src/**/*.spec.ts\"",
     "lint": "./node_modules/tslint/bin/tslint --fix src/**/*.ts -p tsconfig.json --config tslint.json"
   },

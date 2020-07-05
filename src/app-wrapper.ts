@@ -1,6 +1,5 @@
 import * as program from "commander";
 import * as fs from "fs";
-import { HttpClient } from "typed-rest-client/HttpClient";
 import * as YAML from "yaml";
 import { LatexGenerator } from "./latex-generator.interface";
 import { MatchService } from "./match.service";

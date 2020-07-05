@@ -16,7 +16,7 @@ export class MatchlistGenerator implements LatexGenerator {
   private static defaultLatexTemplate = `
   {{=<< >>=}}
   <<#matches>>
-  \\match{<<subtitle>>}{<<&home>>}{<<&guest>>}{<<prefix>>}
+  <<subtitle>>: <<&home>> vs. <<&guest>> (<<prefix>>)
   <</matches>>
   `;
 
@@ -64,9 +64,9 @@ export class MatchlistGenerator implements LatexGenerator {
         const aliasesMap = aliases.reduce(
           (map, aliasListItem) =>  {
             map[aliasListItem.name] = aliasListItem.alias;
-            return map;
-          },
-          {}
+            return map; 
+          }, 
+          {} 
         );
 
         const date = Moment(match.date);

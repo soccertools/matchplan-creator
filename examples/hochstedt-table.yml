@@ -5,6 +5,8 @@ matchplan:
       - Erfurt
       - Rapid
       - Fortuna
+      - Eintracht
+      - Nord
       - Union
       - Empor
   cutter:
@@ -20,7 +22,6 @@ matchplan:
     id: 00ES8GNC6K000035VV0AG08LVUPGND5I
     nameSelector: Hochstedt
     ageClasses:
-      - { ageSelector: Herren, nameSelector: <nameSelector> I}
       - { ageSelector: Herren, nameSelector: <nameSelector> II}
       - { ageSelector: D-Junioren, nameSelector: Vieselbach }
       - { ageSelector: E-Junioren, nameSelector: <nameSelector> I }
